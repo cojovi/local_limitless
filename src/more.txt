@@ -1,0 +1,55 @@
+"You are tasked with analyzing and modifying the current MCP server and its associated SQLite database to ensure efficient and timely data synchronization with the limitless.ai API.
+
+Specific Requirements:
+
+Data Pull Frequency:
+
+Determine the current frequency at which the MCP server pulls data from the limitless.ai API and stores it locally in the SQLite database.
+If a pre-existing configuration for this frequency is not defined, proceed to implement the following.
+Implementation of 8-Minute Update Check:
+
+Implement a mechanism to check the limitless.ai API endpoint for new data every 8 minutes.
+This mechanism must be highly efficient to minimize resource consumption and latency.
+State Management and Incremental Updates:
+
+Crucially, the system must maintain a record of the last successful data pull, including:
+A timestamp of the last pull.
+Any relevant identifiers or cursors from the API that indicate the last processed data point.
+Implement logic to retrieve only new data from the limitless.ai API endpoint, starting from the point where the last pull left off. This prevents redundant data retrieval and storage.
+Error Handling and Robustness:
+
+Include robust error handling to manage potential issues such as:
+API connectivity problems.
+Data format inconsistencies.
+SQLite database errors.
+Implement logging to track data pull operations, including timestamps, data volumes, and any encountered errors.
+Efficiency Considerations:
+
+Prioritize efficient data retrieval and storage.
+Minimize the number of API calls and the amount of data transferred.
+Optimize SQLite database operations for speed and performance.
+Deliverables:
+
+Provide a detailed analysis of the existing data pull mechanism, if any.
+Present the code implementation (or pseudocode, if applicable) for the 8-minute update check, including:
+The logic for tracking the last data pull.
+The API request construction for retrieving incremental data.
+The SQLite database insertion or update logic.
+Error handling.
+Provide a explanation of the logic used, and any dependancies.
+Provide any needed SQL commands to create database tables, or alter tables.
+Constraints:
+
+The solution must be compatible with the existing MCP server and SQLite database setup.
+The 8-minute update frequency is a strict requirement."
+Why This Prompt Is Better:
+
+Clear Role and Task Definition: It explicitly tells the AI it's an analyzer and implementer.
+Structured Requirements: It breaks down the task into numbered, logical steps.
+Specific Instructions: It uses precise language like "implement a mechanism," "state management," and "incremental updates."
+Emphasis on Efficiency: It highlights the importance of minimizing resource usage.
+Detailed Deliverables: It specifies the exact outputs expected from the AI.
+Explicit Constraints: It clarifies the limitations of the task.
+Terms a LLM will understand: terms like API endpoint, SQL database, and incremental data are used.
+Error handling: explicitly asks for error handling.
+

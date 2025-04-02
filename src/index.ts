@@ -126,6 +126,81 @@ async function makeLimitlessRequest<T>(url: string, params?: Record<string, unkn
   }
 }
 
+async function sendNotification(message: string) {
+  try {
+    const response = await fetch('http://192.168.1.13:3006/message', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        body: {
+          message: message
+        },
+        recipient: {
+          handle: "cojovi@icloud.com"
+        }
+      })
+    });
+    
+    if (!response.ok) {
+      console.error('Failed to send notification:', await response.text());
+    }
+  } catch (error) {
+    console.error('Error sending notification:', error);
+  }
+}
+
+function checkForNames(content: string): string | null {
+  const names = ['cody', 'jonni', 'roofing'];
+  const lowerContent = content.toLowerCase();
+  
+  for (const name of names) {
+    if (lowerContent.includes(name)) {
+      return `Name "${name}" was mentioned in a lifelog entry`;
+    }
+  }
+  return null;
+}
+
+// Function to check for text message requests
+function checkForTextMessageRequest(content: string): boolean {
+  const phrases = ['send this in text message', 'send in text'];
+  const lowerContent = content.toLowerCase();
+  
+  return phrases.some(phrase => lowerContent.includes(phrase));
+}
+
+// Function to send text message
+async function sendTextMessage(content: string) {
+  try {
+    const response = await fetch('https://c9a6-2600-387-15-391b-00-b.ngrok-free.app/message', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        body: {
+          message: content
+        },
+        recipient: {
+          handle: "cojovi@icloud.com"
+        }
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    console.log('Text message sent successfully');
+    return true;
+  } catch (error) {
+    console.error('Error sending text message:', error);
+    return false;
+  }
+}
+
 /* =================== SERVER CODE (GET endpoints only) =================== */
 
 // Schema for GET /v1/lifelogs query parameters
@@ -207,6 +282,26 @@ async function performUpdateCheck() {
           'INSERT OR IGNORE INTO lifelogs (id, startTime, data) VALUES (?, ?, ?)',
           [lifelog.id, lifelog.startTime, JSON.stringify(lifelog)]
         );
+
+        // Check for names and text message requests in the content
+        if (lifelog.contents) {
+          for (const content of lifelog.contents) {
+            if (content.type === 'blockquote' && content.content) {
+              // Check for monitored names
+              const notificationMessage = checkForNames(content.content);
+              if (notificationMessage) {
+                await sendNotification(notificationMessage);
+              }
+
+              // Check for text message requests
+              if (checkForTextMessageRequest(content.content)) {
+                // Format the lifelog content for the text message
+                const textContent = `New Lifelog Entry (${lifelog.startTime}):\n${content.content}`;
+                await sendTextMessage(textContent);
+              }
+            }
+          }
+        }
       }
       console.log(`Stored ${data.data.lifelogs.length} new lifelogs`);
     }

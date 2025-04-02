@@ -1,0 +1,10 @@
+curl -X POST https://c9a6-2600-387-15-391b-00-b.ngrok-free.app/message \
+     -H "Content-Type: application/json" \
+     -d '{
+           "body": {
+             "message": "LAST LIMITLESS TEXT BUNDLE HERE"
+           },
+           "recipient": {
+             "handle": "cojovi@icloud.com"
+           }
+         }'
